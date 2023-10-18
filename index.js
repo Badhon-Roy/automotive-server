@@ -3,7 +3,7 @@ require('dotenv').config();
 const cors = require('cors');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express()
-const port = process.env.PORT || 5000 ;
+const port = process.env.PORT || 5000;
 
 // middleware
 app.use(cors())
@@ -30,22 +30,39 @@ async function run() {
     const database = client.db("brandDB");
     const carsCollection = database.collection("Cars");
 
-    app.get('/allCars' , async(req , res)=>{
-        const result = await carsCollection.find().toArray();
-        res.send(result)
+    app.get('/allCars', async (req, res) => {
+      const result = await carsCollection.find().toArray();
+      res.send(result)
     })
-    app.get('/brands' , async(req , res)=>{
-        const brand = req.query.brand;
-        const query = {brand : brand  };
-        const result = await carsCollection.find(query).toArray();
-        res.send(result)
+    app.post('/allCars', async (req, res) => {
+      const car = req.body;
+      console.log(car);
+      const result = await carsCollection.insertOne(car);
+      res.send(result)
     })
-    app.get('/showCar/:id' , async(req , res)=>{
-        const id = req.params.id;
-        const query = {_id : new ObjectId(id) };
-        const result = await carsCollection.findOne(query);
-        res.send(result)
+    app.get('/brands', async (req, res) => {
+      const brand = req.query.brand;
+      const query = { brand: brand };
+      const result = await carsCollection.find(query).toArray();
+      res.send(result)
     })
+    app.get('/showCar/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await carsCollection.findOne(query);
+      res.send(result)
+    })
+    // app.get('/myCarts' , async(req , res)=>{
+    //     const cursor = carsCollection.find();
+    //     const result = await cursor.toArray();
+    //     res.send(result)
+    // }) 
+    // app.post('/myCarts' , async(req , res)=>{
+    //     const car = req.body;
+    //     console.log(car);
+    //     const result = await carsCollection.insertOne(car);
+    //     res.send(result)
+    // })
 
 
 
@@ -58,7 +75,7 @@ async function run() {
     // await client.close();
   }
 }
-run().catch(console.dir);
+run().catch(console.log);
 
 
 
@@ -77,10 +94,10 @@ run().catch(console.dir);
 
 
 
-app.get('/', (req , res)=>{
-    res.send('Automotive product server is running')
+app.get('/', (req, res) => {
+  res.send('Automotive product server is running')
 })
 
-app.listen(port , ()=>{
-    console.log(`Automotive product server is running on port : ${port}`);
+app.listen(port, () => {
+  console.log(`Automotive product server is running on port : ${port}`);
 })
