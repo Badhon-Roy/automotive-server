@@ -30,14 +30,37 @@ async function run() {
     const database = client.db("brandDB");
     const carsCollection = database.collection("Cars");
     const cartsCollection = database.collection("Carts")
+    const brandCollection = database.collection("Brands")
 
     app.get('/allCars', async (req, res) => {
       const result = await carsCollection.find().toArray();
       res.send(result)
     })
+    app.put('/allCars/:id' , async(req , res)=>{
+      const id = req.params.id;
+      const car = req.body;
+      const filter = { _id : new ObjectId(id) };
+      const options = { upsert: true };
+      const updateCar = {
+        $set: {
+          name : car.name ,
+          brand : car.brand ,
+          type : car.type ,
+          price : car.price ,
+          rating :car.rating , 
+          description : car.description ,
+          image : car.image
+        },
+      };
+      const result = await carsCollection.updateOne(filter, updateCar, options);
+      res.send(result)
+    })
+    app.get('/allBrands', async (req, res) => {
+      const result = await brandCollection.find().toArray();
+      res.send(result)
+    })
     app.post('/allCars', async (req, res) => {
       const car = req.body;
-      console.log(car);
       const result = await carsCollection.insertOne(car);
       res.send(result)
     })
@@ -59,7 +82,6 @@ async function run() {
     }) 
     app.post('/myCarts' , async(req , res)=>{
         const car = req.body;
-        console.log(car);
         const result = await cartsCollection.insertOne(car);
         res.send(result)
     })
