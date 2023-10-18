@@ -29,6 +29,7 @@ async function run() {
 
     const database = client.db("brandDB");
     const carsCollection = database.collection("Cars");
+    const cartsCollection = database.collection("Carts")
 
     app.get('/allCars', async (req, res) => {
       const result = await carsCollection.find().toArray();
@@ -52,17 +53,16 @@ async function run() {
       const result = await carsCollection.findOne(query);
       res.send(result)
     })
-    // app.get('/myCarts' , async(req , res)=>{
-    //     const cursor = carsCollection.find();
-    //     const result = await cursor.toArray();
-    //     res.send(result)
-    // }) 
-    // app.post('/myCarts' , async(req , res)=>{
-    //     const car = req.body;
-    //     console.log(car);
-    //     const result = await carsCollection.insertOne(car);
-    //     res.send(result)
-    // })
+    app.get('/myCarts' , async(req , res)=>{
+        const result = await cartsCollection.find().toArray();
+        res.send(result)
+    }) 
+    app.post('/myCarts' , async(req , res)=>{
+        const car = req.body;
+        console.log(car);
+        const result = await cartsCollection.insertOne(car);
+        res.send(result)
+    })
 
 
 
